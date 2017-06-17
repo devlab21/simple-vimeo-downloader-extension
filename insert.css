@@ -1,0 +1,23 @@
+.__svd-logo__ {
+  margin-bottom: 0 !important;
+}
+
+.__svd-logo__ > img {
+  width: 3.6em;
+  height: 3.6em;
+}
+
+.__svd-download__ {
+  margin-bottom: 0.1em !important;
+}
+
+.__svd-download__ > a > button {
+  height: 1.6em !important;
+
+  color: white;
+}
+
+.__svd-download__ > a > button:hover,
+.__svd-download__ > a > button:focus {
+  color: black;
+}

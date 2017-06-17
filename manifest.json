@@ -1,0 +1,23 @@
+{
+  "manifest_version": 2,
+  "name": "Simple Vimeo Downloader",
+  "version": "1.0.0",
+  "description": "Simple Vimeo Downloader extension allows you to download video from Vimeo site or embedded on other sites by injecting download buttons directly in Vimeo player.",
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
+  "browser_action": {
+    "default_title": "Inject Simple Vimeo Downloader buttons",
+    "default_popup": "popup.html"
+  },
+  "permissions": [
+    "activeTab",
+    "*://vimeo.com/*",
+    "*://player.vimeo.com/*"
+  ],
+  "web_accessible_resources": [
+    "inject_icon.svg"
+  ]
+}
