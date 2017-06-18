@@ -56,9 +56,9 @@
 
   if (window === top) {
     if (vimeoSite) {
-      console.log('Inject Simple Vimeo Downloader Button into video on vimeo site');
+      console.log('Inject Simple Vimeo Downloader Button into vimeo player on vimeo site');
     } else {
-      console.log('Inject Simple Vimeo Downloader Button into video on embed site');
+      console.log('Inject Simple Vimeo Downloader Button into vimeo player on embed site');
     }
   }
 
