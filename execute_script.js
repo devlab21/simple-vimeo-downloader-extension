@@ -20,7 +20,7 @@
     vimeoDownloadArray.forEach(function (e) {
       var element = document.createElement('div');
       element.classList.add('box', '__svd-download__');
-      element.innerHTML = "<a href='" + e.url + "' target='_blank' title='Download " + e.quality + " wiht " + e.fps + "fps'><button class='rounded-box'>" + e.quality + "</button></a>";
+      element.innerHTML = "<a download href='" + e.url + "' target='_blank' title='Download " + e.quality + " wiht " + e.fps + "fps'><button class='rounded-box'>" + e.quality + "</button></a>";
       sidedockElement.appendChild(element);
     });
   }
