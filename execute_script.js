@@ -62,7 +62,7 @@
     }
   }
 
-  var sidedockElement = document.querySelector(".controls-wrapper > .sidedock");
+  var sidedockElement = document.querySelector(".vp-controls-wrapper > .vp-sidedock");
   if (sidedockElement === null) {
     console.log('  vimeo player is absent on [' + document.URL + ']');
     return { status: 'player-absent' };
