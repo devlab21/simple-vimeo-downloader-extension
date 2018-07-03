@@ -74,8 +74,15 @@
       logoToSidedockElemenAdd(sidedockElement);
 
       if (vimeoSite) {
+        var videoConfigURL;
+        var playerElement = document.querySelector("[id='" + vimeoSiteVideoId + "'][data-config-url]");
+        if (playerElement === null) {
+          console.log('  vimeo player element with config URL is absent on [' + document.URL + '] - default config URL will be used');
+          videoConfigURL = 'https://player.vimeo.com/video/' + vimeoSiteVideoId + '/config';
+        } else {
+          videoConfigURL = playerElement.getAttribute('data-config-url');
+        }
         var httpRequest = new XMLHttpRequest();
-        var videoConfigURL = 'https://player.vimeo.com/video/' + vimeoSiteVideoId + '/config';
         httpRequest.open('GET', videoConfigURL);
         httpRequest.onreadystatechange = function () {
           if (httpRequest.readyState === XMLHttpRequest.DONE) {
