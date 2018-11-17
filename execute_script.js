@@ -47,11 +47,19 @@
 
   var injectIconURL = chrome.extension.getURL("inject_icon.svg");
 
-  var vimeoSite = false;
-  var vimeoSiteMatch = /:\/\/vimeo\.com.*\/(\d+).*/g.exec(document.URL);
-  if (vimeoSiteMatch !== null) {
-    vimeoSite = true;
-    var vimeoSiteVideoId = vimeoSiteMatch[1];
+  var vimeoSite = /:\/\/vimeo\.com.*/g.test(document.URL);
+  if (vimeoSite) {
+    var playerContainer = document.querySelector(".player_container");
+    if (playerContainer === null) {
+      console.log('  vimeo player container is absent on [' + document.URL + ']');
+      return { status: 'player-absent' };
+    }
+    var playerContainerIdMatch = /clip_(\d+)/g.exec(playerContainer.id);
+    if (playerContainerIdMatch === null) {
+      console.log('  vimeo player container id [' + playerContainer.id + '] is unsupported on [' + document.URL + ']');
+      return { status: 'player-absent' };
+    }
+    var vimeoSiteVideoId = playerContainerIdMatch[1];
   }
 
   if (window === top) {
