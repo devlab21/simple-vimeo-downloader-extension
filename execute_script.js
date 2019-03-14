@@ -59,6 +59,8 @@
 
   var injectIconURL = chrome.extension.getURL("inject_icon.svg");
 
+  var videoConfigURL;
+
   var vimeoSite = /:\/\/vimeo\.com.*/g.test(document.URL);
   if (vimeoSite) {
     var playerContainer = document.querySelector(".player_container");
@@ -72,6 +74,14 @@
       return { status: 'player-absent' };
     }
     var vimeoSiteVideoId = playerContainerIdMatch[1];
+
+    var playerElement = document.querySelector("[id='" + vimeoSiteVideoId + "'][data-config-url]");
+    if (playerElement === null) {
+      console.log('  vimeo player element with config URL is absent on [' + document.URL + '] - default config URL will be used');
+      videoConfigURL = 'https://player.vimeo.com/video/' + vimeoSiteVideoId + '/config';
+    } else {
+      videoConfigURL = playerElement.getAttribute('data-config-url');
+    }
   }
 
   if (window === top) {
@@ -93,15 +103,7 @@
     } else {
       logoToSidedockElemenAdd(sidedockElement);
 
-      if (vimeoSite) {
-        var videoConfigURL;
-        var playerElement = document.querySelector("[id='" + vimeoSiteVideoId + "'][data-config-url]");
-        if (playerElement === null) {
-          console.log('  vimeo player element with config URL is absent on [' + document.URL + '] - default config URL will be used');
-          videoConfigURL = 'https://player.vimeo.com/video/' + vimeoSiteVideoId + '/config';
-        } else {
-          videoConfigURL = playerElement.getAttribute('data-config-url');
-        }
+      if (videoConfigURL) {
         var httpRequest = new XMLHttpRequest();
         httpRequest.open('GET', videoConfigURL);
         httpRequest.onreadystatechange = function () {
