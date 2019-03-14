@@ -44,6 +44,18 @@
       return 1;
     }
   }
+  
+  function searchWithinDocumentScripts(regExp) {
+    var scriptList = document.getElementsByTagName('script');
+    for (var i = 0; i < scriptList.length; i++) {
+      var script = scriptList[i];
+      var match = regExp.exec(script.text);
+      if (match !== null) {
+        return match;
+      }
+    }
+    return null;
+  }
 
   var injectIconURL = chrome.extension.getURL("inject_icon.svg");
 
@@ -107,20 +119,17 @@
         httpRequest.send();
         return { status: 'async-injecting' };
       } else {
-        var scriptList = document.getElementsByTagName('script');
-        for (var i = 0; i < scriptList.length; i++) {
-          var script = scriptList[i];
-          var vimeoMatch = /({[^{]*"[\s\S]*?request[\s\S]*?files[\s\S]*?progressive[\s\S]*?});/gm.exec(script.text);
-          if (vimeoMatch !== null) {
-            var vimeoJSON = JSON.parse(vimeoMatch[1]);
-            downloadOptionsFromVimeoJSONToSidedockElemenAdd(vimeoJSON, sidedockElement);
+        var vimeoMatch = searchWithinDocumentScripts(/({[^{]*"[\s\S]*?request[\s\S]*?files[\s\S]*?progressive[\s\S]*?});/gm);
+        if (vimeoMatch !== null) {
+          var vimeoJSON = JSON.parse(vimeoMatch[1]);
+          downloadOptionsFromVimeoJSONToSidedockElemenAdd(vimeoJSON, sidedockElement);
 
-            console.log('  successful injected in vimeo player on [' + document.URL + '] with video title - ' + vimeoJSON.video.title);
-            return { status: 'successful-injected' };
-          }
+          console.log('  successful injected in vimeo player on [' + document.URL + '] with video title - ' + vimeoJSON.video.title);
+          return { status: 'successful-injected' };
+        } else {
+          console.log('  can not find proper vimeo player script on [' + document.URL + ']');
+          return { status: 'script-absent' };
         }
-        console.log('  can not find proper vimeo player script on [' + document.URL + ']');
-        return { status: 'script-absent' };
       }
     }
   }
