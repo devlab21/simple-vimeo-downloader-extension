@@ -61,31 +61,45 @@
 
   var videoConfigURL;
 
-  var vimeoSite = /:\/\/vimeo\.com.*/g.test(document.URL);
-  if (vimeoSite) {
-    var playerContainer = document.querySelector(".player_container");
-    if (playerContainer === null) {
-      console.log('  vimeo player container is absent on [' + document.URL + ']');
-      return { status: 'player-absent' };
-    }
-    var playerContainerIdMatch = /clip_(\d+)/g.exec(playerContainer.id);
-    if (playerContainerIdMatch === null) {
-      console.log('  vimeo player container id [' + playerContainer.id + '] is unsupported on [' + document.URL + ']');
-      return { status: 'player-absent' };
-    }
-    var vimeoSiteVideoId = playerContainerIdMatch[1];
-
-    var playerElement = document.querySelector("[id='" + vimeoSiteVideoId + "'][data-config-url]");
-    if (playerElement === null) {
-      console.log('  vimeo player element with config URL is absent on [' + document.URL + '] - default config URL will be used');
-      videoConfigURL = 'https://player.vimeo.com/video/' + vimeoSiteVideoId + '/config';
+  var vimeoReviewSite = /:\/\/vimeo\.com\/.*\/review\/.*/g.test(document.URL);
+  if (vimeoReviewSite) {
+    var vimeoReviewMatch = searchWithinDocumentScripts(/({[^{]*"vimeo_esi[\s\S]*?config[\s\S]*?clipData[\s\S]*?configUrl[\s\S]*?})\);/gm);
+    if (vimeoReviewMatch !== null) {
+      var vimeoReviewJSON = JSON.parse(vimeoReviewMatch[1]);
+      videoConfigURL = vimeoReviewJSON.vimeo_esi.config.clipData.configUrl;
     } else {
-      videoConfigURL = playerElement.getAttribute('data-config-url');
+      console.log('  can not find proper vimeo review config script on [' + document.URL + ']');
+      return { status: 'script-absent' };
+    }
+  } else {
+    var vimeoSite = /:\/\/vimeo\.com.*/g.test(document.URL);
+    if (vimeoSite) {
+      var playerContainer = document.querySelector(".player_container");
+      if (playerContainer === null) {
+        console.log('  vimeo player container is absent on [' + document.URL + ']');
+        return { status: 'player-absent' };
+      }
+      var playerContainerIdMatch = /clip_(\d+)/g.exec(playerContainer.id);
+      if (playerContainerIdMatch === null) {
+        console.log('  vimeo player container id [' + playerContainer.id + '] is unsupported on [' + document.URL + ']');
+        return { status: 'player-absent' };
+      }
+      var vimeoSiteVideoId = playerContainerIdMatch[1];
+
+      var playerElement = document.querySelector("[id='" + vimeoSiteVideoId + "'][data-config-url]");
+      if (playerElement === null) {
+        console.log('  vimeo player element with config URL is absent on [' + document.URL + '] - default config URL will be used');
+        videoConfigURL = 'https://player.vimeo.com/video/' + vimeoSiteVideoId + '/config';
+      } else {
+        videoConfigURL = playerElement.getAttribute('data-config-url');
+      }
     }
   }
 
   if (window === top) {
-    if (vimeoSite) {
+    if (vimeoReviewSite) {
+      console.log('Inject Simple Vimeo Downloader Button into vimeo player on vimeo review site');
+    } else if (vimeoSite) {
       console.log('Inject Simple Vimeo Downloader Button into vimeo player on vimeo site');
     } else {
       console.log('Inject Simple Vimeo Downloader Button into vimeo player on embed site');
